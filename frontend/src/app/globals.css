@@ -1,0 +1,433 @@
+@import "tailwindcss";
+
+:root {
+  --background: #050711;
+  --foreground: #f8fafc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: #050711;
+}
+
+body {
+  margin: 0;
+  background: #050711;
+  color: #f8fafc;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050711;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(129, 140, 248, 0.3);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(129, 140, 248, 0.55);
+}
+
+/* =========================================================
+   EXISTING GLASS SYSTEM
+   ========================================================= */
+
+.glass-card {
+  background: rgba(10, 15, 30, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card-hover {
+  transition: all 0.25s ease;
+}
+
+.glass-card-hover:hover {
+  border-color: rgba(129, 140, 248, 0.25);
+  background: rgba(14, 20, 40, 0.82);
+  transform: translateY(-2px);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 35px -8px rgba(34, 211, 238, 0.35);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 35px -8px rgba(16, 185, 129, 0.3);
+}
+
+.glow-rose {
+  box-shadow: 0 0 35px -8px rgba(244, 63, 94, 0.3);
+}
+
+/* =========================================================
+   AUTOPM — NEW PREMIUM VISUAL SYSTEM
+   ========================================================= */
+
+.autopm-page {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% -15%,
+      rgba(99, 102, 241, 0.32),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 100% 35%,
+      rgba(6, 182, 212, 0.14),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 0% 65%,
+      rgba(139, 92, 246, 0.13),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #080a18 0%,
+      #050711 45%,
+      #03050d 100%
+    );
+}
+
+/* Animated ambient light */
+
+.autopm-page::before {
+  content: "";
+  position: fixed;
+  inset: -30%;
+  z-index: -2;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 30% 30%,
+      rgba(99, 102, 241, 0.12),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 70% 60%,
+      rgba(34, 211, 238, 0.08),
+      transparent 20%
+    );
+
+  filter: blur(80px);
+  animation: autopm-aurora 14s ease-in-out infinite alternate;
+}
+
+/* Technical grid */
+
+.autopm-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(
+      rgba(148, 163, 184, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.035) 1px,
+      transparent 1px
+    );
+
+  background-size: 44px 44px;
+
+  mask-image: linear-gradient(
+    to bottom,
+    black,
+    transparent 90%
+  );
+}
+
+/* =========================================================
+   TOP ANALYSIS PANEL
+   ========================================================= */
+
+.autopm-control-panel {
+  position: relative;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(17, 24, 50, 0.88),
+      rgba(7, 11, 26, 0.78)
+    );
+
+  border: 1px solid rgba(129, 140, 248, 0.18);
+
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.autopm-control-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(129, 140, 248, 0.9),
+    rgba(34, 211, 238, 0.8),
+    transparent
+  );
+
+  box-shadow:
+    0 0 20px rgba(99, 102, 241, 0.7);
+}
+
+/* =========================================================
+   MODE SWITCHER
+   ========================================================= */
+
+.autopm-mode-selector {
+  background: rgba(2, 6, 23, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.autopm-mode-selector button {
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.autopm-mode-selector button:hover {
+  transform: translateY(-1px);
+}
+
+.autopm-mode-active {
+  box-shadow:
+    0 0 20px rgba(99, 102, 241, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* =========================================================
+   PREMIUM PRIMARY BUTTON
+   ========================================================= */
+
+.autopm-primary-button {
+  position: relative;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      110deg,
+      #4f46e5,
+      #7c3aed,
+      #06b6d4,
+      #4f46e5
+    );
+
+  background-size: 300% 100%;
+
+  box-shadow:
+    0 10px 35px rgba(79, 70, 229, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+
+  animation: autopm-gradient 6s ease infinite;
+}
+
+.autopm-primary-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.22),
+    transparent 70%
+  );
+
+  transform: translateX(-120%);
+  animation: autopm-shimmer 4s ease-in-out infinite;
+}
+
+.autopm-primary-button:hover {
+  transform: translateY(-2px) scale(1.01);
+
+  box-shadow:
+    0 15px 45px rgba(79, 70, 229, 0.4),
+    0 0 25px rgba(34, 211, 238, 0.15);
+}
+
+.autopm-primary-button:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* =========================================================
+   LIVE GITHUB BANNER
+   ========================================================= */
+
+.autopm-live-banner {
+  position: relative;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(16, 185, 129, 0.09),
+      rgba(6, 182, 212, 0.05),
+      rgba(16, 185, 129, 0.02)
+    );
+
+  border: 1px solid rgba(16, 185, 129, 0.2);
+
+  box-shadow:
+    0 0 35px rgba(16, 185, 129, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.autopm-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #34d399;
+
+  box-shadow:
+    0 0 0 4px rgba(52, 211, 153, 0.08),
+    0 0 18px rgba(52, 211, 153, 0.9);
+
+  animation: autopm-live-pulse 2s ease-in-out infinite;
+}
+
+/* =========================================================
+   SECTION ENTRANCE
+   ========================================================= */
+
+.autopm-section {
+  animation: autopm-enter 0.7s ease both;
+}
+
+.autopm-section-delay-1 {
+  animation: autopm-enter 0.7s 0.1s ease both;
+}
+
+.autopm-section-delay-2 {
+  animation: autopm-enter 0.7s 0.2s ease both;
+}
+
+.autopm-section-delay-3 {
+  animation: autopm-enter 0.7s 0.3s ease both;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes autopm-aurora {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(2%, 2%, 0) scale(1.04);
+  }
+
+  100% {
+    transform: translate3d(-1%, 3%, 0) scale(1.02);
+  }
+}
+
+@keyframes autopm-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes autopm-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+
+  45%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes autopm-live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: scale(0.82);
+  }
+}
+
+@keyframes autopm-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
