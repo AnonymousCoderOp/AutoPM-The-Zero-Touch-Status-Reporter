@@ -38,6 +38,17 @@ export interface GitHubCommit {
   branch: string;
 }
 
+export interface WorkflowRun {
+  id?: number;
+  name?: string;
+  status?: string;
+  conclusion?: string | null;
+  branch?: string;
+  created_at?: string;
+  updated_at?: string;
+  html_url?: string;
+}
+
 export interface RepositoryContext {
   analysis_type?: string;
   repository?: {
@@ -45,6 +56,7 @@ export interface RepositoryContext {
     name?: string;
     full_name?: string;
   };
+  workflow_runs?: WorkflowRun[];
 }
 export interface DemoDataPayload {
   project_name: string;

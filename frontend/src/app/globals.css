@@ -431,3 +431,250 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =========================================================
+   AUTOPM LIGHT MODE
+   ========================================================= */
+
+.autopm-light body {
+  background: #f4f7fb;
+  color: #0f172a;
+}
+
+.autopm-light .autopm-page {
+  background:
+    radial-gradient(
+      circle at 50% -15%,
+      rgba(99, 102, 241, 0.13),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 100% 35%,
+      rgba(6, 182, 212, 0.08),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #f8fafc 0%,
+      #eef2ff 50%,
+      #f8fafc 100%
+    );
+}
+
+.autopm-light .autopm-page::after {
+  background-image:
+    linear-gradient(
+      rgba(71, 85, 105, 0.045) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(71, 85, 105, 0.045) 1px,
+      transparent 1px
+    );
+}
+
+.autopm-light .autopm-control-panel {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(99, 102, 241, 0.16);
+  box-shadow:
+    0 20px 60px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.autopm-light .glass-card {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.autopm-light .autopm-mode-selector {
+  background: rgba(241, 245, 249, 0.9);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.autopm-light .autopm-live-banner {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(16, 185, 129, 0.08),
+      rgba(6, 182, 212, 0.04)
+    );
+}
+
+.autopm-light footer {
+  background: rgba(248, 250, 252, 0.9);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   LIGHT MODE — GLOBAL TEXT / SURFACE CORRECTIONS
+   ========================================================= */
+
+.autopm-light .text-white {
+  color: #0f172a !important;
+}
+
+.autopm-light .text-slate-100 {
+  color: #0f172a !important;
+}
+
+.autopm-light .text-slate-200 {
+  color: #1e293b !important;
+}
+
+.autopm-light .text-slate-300 {
+  color: #334155 !important;
+}
+
+.autopm-light .text-slate-400 {
+  color: #64748b !important;
+}
+
+.autopm-light .text-slate-500 {
+  color: #64748b !important;
+}
+
+.autopm-light .text-slate-600 {
+  color: #475569 !important;
+}
+
+/* Dark Tailwind surfaces → light surfaces */
+.autopm-light [class*="bg-slate-950"] {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+}
+
+.autopm-light [class*="bg-slate-900"] {
+  background-color: rgba(241, 245, 249, 0.9) !important;
+}
+
+.autopm-light [class*="bg-slate-800"] {
+  background-color: rgba(226, 232, 240, 0.75) !important;
+}
+
+/* Borders */
+.autopm-light [class*="border-slate-800"],
+.autopm-light [class*="border-slate-700"],
+.autopm-light [class*="border-white/10"],
+.autopm-light [class*="border-white/5"] {
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+/* Inputs */
+.autopm-light input,
+.autopm-light textarea {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+.autopm-light input::placeholder,
+.autopm-light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Keep important accent text visible */
+.autopm-light .text-cyan-300 {
+  color: #0891b2 !important;
+}
+
+.autopm-light .text-cyan-400 {
+  color: #0891b2 !important;
+}
+
+.autopm-light .text-emerald-300 {
+  color: #059669 !important;
+}
+
+.autopm-light .text-emerald-400 {
+  color: #059669 !important;
+}
+
+.autopm-light .text-indigo-300 {
+  color: #4f46e5 !important;
+}
+
+.autopm-light .text-rose-300 {
+  color: #e11d48 !important;
+}
+
+.autopm-light .text-amber-300 {
+  color: #d97706 !important;
+}
+
+/* Tables / activity rows */
+.autopm-light table {
+  color: #0f172a;
+}
+
+.autopm-light tr {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Generic hover surfaces */
+.autopm-light [class*="hover:bg-slate-900"]:hover {
+  background-color: rgba(226, 232, 240, 0.7) !important;
+}
+
+.autopm-light [class*="hover:bg-slate-800"]:hover {
+  background-color: rgba(226, 232, 240, 0.8) !important;
+}
+
+
+/* =========================================================
+   LIGHT MODE — ANALYSIS SOURCE / MODE SELECTOR
+   ========================================================= */
+
+.autopm-light .autopm-mode-selector {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(15, 23, 42, 0.10) !important;
+  box-shadow:
+    0 8px 30px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* All buttons inside the mode selector */
+.autopm-light .autopm-mode-selector button {
+  color: #475569 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Hover */
+.autopm-light .autopm-mode-selector button:hover {
+  color: #0f172a !important;
+  background: rgba(226, 232, 240, 0.65) !important;
+}
+
+/* Active Demo/GitHub button */
+.autopm-light .autopm-mode-selector .autopm-mode-active {
+  color: #312e81 !important;
+  background: rgba(224, 231, 255, 0.95) !important;
+  border-color: rgba(99, 102, 241, 0.22) !important;
+  box-shadow:
+    0 4px 16px rgba(79, 70, 229, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Active icon/text */
+.autopm-light .autopm-mode-selector .autopm-mode-active svg {
+  color: #4f46e5 !important;
+}
+
+/* Secondary descriptive text around the selector */
+.autopm-light .autopm-mode-selector p,
+.autopm-light .autopm-mode-selector span {
+  color: inherit;
+}
+
+/* GitHub URL input inside the source panel */
+.autopm-light .autopm-control-panel input {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+.autopm-light .autopm-control-panel input::placeholder {
+  color: #94a3b8 !important;
+}
+

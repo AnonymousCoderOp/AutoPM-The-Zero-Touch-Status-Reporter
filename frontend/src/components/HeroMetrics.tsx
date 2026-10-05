@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
   Activity,
   Zap,
@@ -10,6 +10,11 @@ import {
   AlertTriangle,
   CheckCircle2,
   Sparkles,
+  ChevronDown,
+  ShieldAlert,
+  GitPullRequest,
+  Workflow,
+  CircleAlert,
 } from "lucide-react";
 import { ReportResponse } from "@/types";
 
@@ -38,29 +43,181 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
   const healthColor = isHealthy
     ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
     : isModerate
-    ? "text-amber-400 bg-amber-500/10 border-amber-500/20"
-    : "text-rose-400 bg-rose-500/10 border-rose-500/20";
+      ? "text-amber-400 bg-amber-500/10 border-amber-500/20"
+      : "text-rose-400 bg-rose-500/10 border-rose-500/20";
 
   const projectName = report?.project_name || "Project Nova";
-
-  /*
-   * The page already knows whether the user selected Demo Mode
-   * or GitHub Repository mode.
-   *
-   * Using analysisMode here is more reliable than trying to infer
-   * the mode from nested API response data.
-   */
   const isGitHubRepository = analysisMode === "github";
 
   const dashboardTitle = isGitHubRepository
     ? `${projectName} – Repository Status Dashboard`
     : `${projectName} – Q4 Status Dashboard`;
 
-  const blockerCount = report?.blockers.length ?? 3;
+  const blockerCount = report?.blockers.length ?? 0;
 
   const weekRange =
-    report?.week_range ||
-    "Week 40 · Oct 01 - Oct 07, 2026";
+    report?.week_range || "Week 40 · Oct 01 - Oct 07, 2026";
+
+  const [showScoreDetails, setShowScoreDetails] = useState(false);
+
+  /*
+   * Delivery signals
+   *
+   * Demo mode:
+   *   blockers + risks
+   *
+   * GitHub mode:
+   *   blockers + risks + problematic PRs + failed workflows
+   */
+  const deliverySignalCount = useMemo(() => {
+    if (!report) return 3;
+
+    if (!isGitHubRepository) {
+      return Math.max(
+        report.blockers.length + report.risks.length,
+        1
+      );
+    }
+
+    const activity = report.activity_data;
+    const prs = activity?.github_prs ?? [];
+
+    const repositoryContext = activity?.repository_context as
+      | {
+          workflows?: {
+            total_count?: number;
+            workflow_runs?: Array<{
+              id?: number;
+              name?: string;
+              status?: string;
+              conclusion?: string | null;
+              branch?: string;
+              created_at?: string;
+              updated_at?: string;
+              html_url?: string;
+            }>;
+          };
+          workflow_runs?: Array<{
+            id?: number;
+            name?: string;
+            status?: string;
+            conclusion?: string | null;
+            branch?: string;
+            created_at?: string;
+            updated_at?: string;
+            html_url?: string;
+          }>;
+        }
+      | undefined;
+
+    const workflows =
+      repositoryContext?.workflows?.workflow_runs ??
+      repositoryContext?.workflow_runs ??
+      [];
+
+    const problematicPrs = prs.filter(
+      (pr) =>
+        pr.status === "changes_requested" ||
+        pr.status === "failing_ci"
+    ).length;
+
+    const failedWorkflows = workflows.filter(
+      (workflow) => workflow.conclusion === "failure"
+    ).length;
+
+    return Math.max(
+      report.blockers.length +
+        report.risks.length +
+        problematicPrs +
+        failedWorkflows,
+      1
+    );
+  }, [report, isGitHubRepository]);
+
+  /*
+   * Score explanation
+   *
+   * This deliberately reads the same real GitHub activity
+   * returned by the backend.
+   */
+  const scoreFactors = useMemo(() => {
+    const blockers = report?.blockers ?? [];
+    const risks = report?.risks ?? [];
+    const activity = report?.activity_data;
+
+    const prs = activity?.github_prs ?? [];
+
+    const repositoryContext = activity?.repository_context as
+      | {
+          workflows?: {
+            total_count?: number;
+            workflow_runs?: Array<{
+              id?: number;
+              name?: string;
+              status?: string;
+              conclusion?: string | null;
+              branch?: string;
+              created_at?: string;
+              updated_at?: string;
+              html_url?: string;
+            }>;
+          };
+          workflow_runs?: Array<{
+            id?: number;
+            name?: string;
+            status?: string;
+            conclusion?: string | null;
+            branch?: string;
+            created_at?: string;
+            updated_at?: string;
+            html_url?: string;
+          }>;
+        }
+      | undefined;
+
+    const workflows =
+      repositoryContext?.workflows?.workflow_runs ??
+      repositoryContext?.workflow_runs ??
+      [];
+
+    const openPrs = prs.filter(
+      (pr) => pr.status === "open"
+    ).length;
+
+    const changedPrs = prs.filter(
+      (pr) => pr.status === "changes_requested"
+    ).length;
+
+    const failingPrs = prs.filter(
+      (pr) => pr.status === "failing_ci"
+    ).length;
+
+    const failedWorkflows = workflows.filter(
+      (workflow) => workflow.conclusion === "failure"
+    ).length;
+
+    const successfulWorkflows = workflows.filter(
+      (workflow) => workflow.conclusion === "success"
+    ).length;
+
+    const highBlockers = blockers.filter(
+      (blocker) => blocker.severity === "high"
+    ).length;
+
+    const highRisks = risks.filter(
+      (risk) => risk.severity === "high"
+    ).length;
+
+    return {
+      openPrs,
+      changedPrs,
+      failingPrs,
+      failedWorkflows,
+      successfulWorkflows,
+      highBlockers,
+      highRisks,
+    };
+  }, [report]);
 
   return (
     <div className="space-y-6">
@@ -101,7 +258,7 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
               className={`relative group px-6 py-3.5 rounded-xl font-semibold text-sm tracking-wide transition-all duration-200 flex items-center justify-center gap-2.5 shadow-xl ${
                 isGenerating
                   ? "bg-slate-800 text-slate-400 cursor-not-allowed border border-slate-700"
-                  : "bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-400 hover:to-emerald-400 text-slate-950 shadow-cyan-500/20 hover:shadow-cyan-500/30 hover:scale-[1.02] active:scale-[0.98]"
+                  : "autopm-primary-button text-white hover:scale-[1.02] active:scale-[0.98]"
               }`}
             >
               {isGenerating ? (
@@ -128,8 +285,8 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
               {report
                 ? "Report up-to-date · Click to re-run"
                 : isGitHubRepository
-                ? "Ready to analyze repository"
-                : "Ready to process Week 40 updates"}
+                  ? "Ready to analyze repository"
+                  : "Ready to process Week 40 updates"}
             </span>
           </div>
         </div>
@@ -138,17 +295,28 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
       {/* 4 Core KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Project Health */}
-        <div className="glass-card rounded-xl p-5 border border-white/5 space-y-3 relative overflow-hidden group hover:border-white/10 transition">
+        <div
+          onClick={() => setShowScoreDetails((value) => !value)}
+          className="glass-card rounded-xl p-5 border border-white/5 space-y-3 relative overflow-hidden group hover:border-indigo-500/30 transition cursor-pointer"
+        >
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
               Project Health
             </span>
 
-            <span
-              className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${healthColor}`}
-            >
-              {report ? report.health_verdict : "Evaluated"}
-            </span>
+            <div className="flex items-center gap-2">
+              <span
+                className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${healthColor}`}
+              >
+                {report ? report.health_verdict : "Evaluated"}
+              </span>
+
+              <ChevronDown
+                className={`w-4 h-4 text-slate-500 transition-transform ${
+                  showScoreDetails ? "rotate-180" : ""
+                }`}
+              />
+            </div>
           </div>
 
           <div className="flex items-baseline gap-3">
@@ -160,8 +328,15 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
               <AlertTriangle className="w-3.5 h-3.5" />
 
               <span>
-                {blockerCount}{" "}
-                {blockerCount === 1 ? "Blocker" : "Blockers"} Active
+                {isGitHubRepository
+                  ? `${deliverySignalCount} ${
+                      deliverySignalCount === 1
+                        ? "Delivery Signal"
+                        : "Delivery Signals"
+                    }`
+                  : `${blockerCount} ${
+                      blockerCount === 1 ? "Blocker" : "Blockers"
+                    } Active`}
               </span>
             </div>
           </div>
@@ -172,15 +347,138 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
                 isHealthy
                   ? "bg-emerald-500"
                   : isModerate
-                  ? "bg-gradient-to-r from-amber-500 to-emerald-500"
-                  : "bg-rose-500"
+                    ? "bg-gradient-to-r from-amber-500 to-emerald-500"
+                    : "bg-rose-500"
               }`}
               style={{ width: `${healthScore}%` }}
             />
           </div>
+
+          <div className="flex items-center justify-between text-[11px] text-slate-500">
+            <span>
+              {showScoreDetails
+                ? "Score breakdown"
+                : "Click to see why"}
+            </span>
+
+            <span className="text-indigo-400 font-medium">
+              {showScoreDetails ? "Hide details" : "Why this score?"}
+            </span>
+          </div>
+
+          {showScoreDetails && (
+            <div className="pt-3 mt-2 border-t border-white/10 space-y-2.5">
+              {/* Blockers */}
+              <div className="flex items-start gap-2.5">
+                <ShieldAlert className="w-4 h-4 text-rose-400 mt-0.5 shrink-0" />
+
+                <div>
+                  <p className="text-xs font-semibold text-white">
+                    {scoreFactors.highBlockers} high-severity blocker
+                    {scoreFactors.highBlockers === 1 ? "" : "s"}
+                  </p>
+
+                  <p className="text-[11px] text-slate-400">
+                    Unresolved blockers reduce delivery confidence.
+                  </p>
+                </div>
+              </div>
+
+              {isGitHubRepository ? (
+                <>
+                  {/* Pull Requests */}
+                  <div className="flex items-start gap-2.5">
+                    <GitPullRequest className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+
+                    <div>
+                      <p className="text-xs font-semibold text-white">
+                        {scoreFactors.openPrs} open PR
+                        {scoreFactors.openPrs === 1 ? "" : "s"}
+                      </p>
+
+                      <p className="text-[11px] text-slate-400">
+                        {scoreFactors.changedPrs} requested changes ·{" "}
+                        {scoreFactors.failingPrs} failing CI
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* GitHub Workflows */}
+                  <div className="flex items-start gap-2.5">
+                    <Workflow className="w-4 h-4 text-rose-400 mt-0.5 shrink-0" />
+
+                    <div>
+                      <p className="text-xs font-semibold text-white">
+                        {scoreFactors.failedWorkflows} failed workflow
+                        {scoreFactors.failedWorkflows === 1 ? "" : "s"}
+                      </p>
+
+                      <p className="text-[11px] text-slate-400">
+                        {scoreFactors.successfulWorkflows} successful workflow
+                        {scoreFactors.successfulWorkflows === 1
+                          ? ""
+                          : "s"}{" "}
+                        balance the signal.
+                      </p>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* Demo Mode */
+                <div className="flex items-start gap-2.5">
+                  <CircleAlert className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+
+                  <div>
+                    <p className="text-xs font-semibold text-white">
+                      {blockerCount} active delivery signal
+                      {blockerCount === 1 ? "" : "s"}
+                    </p>
+
+                    <p className="text-[11px] text-slate-400">
+                      Blockers and risks detected across team activity.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Risks */}
+              <div className="flex items-start gap-2.5">
+                <Activity className="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
+
+                <div>
+                  <p className="text-xs font-semibold text-white">
+                    {scoreFactors.highRisks} high-severity risk
+                    {scoreFactors.highRisks === 1 ? "" : "s"}
+                  </p>
+
+                  <p className="text-[11px] text-slate-400">
+                    Risk signals influence the final delivery confidence.
+                  </p>
+                </div>
+              </div>
+
+              {/* AutoPM Assessment */}
+              <div className="pt-2">
+                <div className="rounded-lg bg-indigo-500/10 border border-indigo-500/20 px-3 py-2.5">
+                  <p className="text-[11px] text-indigo-300 leading-relaxed">
+                    <strong className="text-indigo-200">
+                      AutoPM assessment:
+                    </strong>{" "}
+                    {healthScore >= 85
+                      ? "Delivery signals are strong and the project is on a healthy trajectory."
+                      : healthScore >= 70
+                        ? "Delivery is progressing, but active blockers and risk signals should be monitored."
+                        : healthScore >= 50
+                          ? "The project has meaningful delivery risk and needs intervention on the highlighted blockers."
+                          : "Multiple critical delivery signals indicate that immediate intervention is required."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Metric 2: Hours Saved This Week */}
+        {/* Metric 2: Time Saved */}
         <div
           onClick={onOpenRoiModal}
           className="glass-card rounded-xl p-5 border border-white/5 space-y-3 relative overflow-hidden cursor-pointer group hover:border-cyan-500/30 transition hover:bg-slate-900/80"
@@ -259,18 +557,22 @@ export const HeroMetrics: React.FC<HeroMetricsProps> = ({
               Automation Schedule
             </span>
 
-            <span className={`px-2 py-0.5 rounded-md text-[11px] font-semibold ${
-              isGitHubRepository
-                ? "bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
-                : "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
-            }`}>
+            <span
+              className={`px-2 py-0.5 rounded-md text-[11px] font-semibold ${
+                isGitHubRepository
+                  ? "bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
+                  : "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
+              }`}
+            >
               {isGitHubRepository ? "On Demand" : "Active 🟢"}
             </span>
           </div>
 
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-extrabold text-white tracking-tight">
-              {isGitHubRepository ? "Manual Analysis" : "Every Friday"}
+              {isGitHubRepository
+                ? "Manual Analysis"
+                : "Every Friday"}
             </span>
 
             {!isGitHubRepository && (

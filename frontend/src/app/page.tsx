@@ -12,6 +12,7 @@ import { RoiModal } from "@/components/RoiModal";
 import { ScheduleModal } from "@/components/ScheduleModal";
 import { EmailModal } from "@/components/EmailModal";
 import { Toast } from "@/components/Toast";
+import { AskAutoPM } from "@/components/AskAutoPM";
 
 import {
   fetchDemoData,
@@ -64,6 +65,7 @@ export default function DashboardPage() {
   const [isRoiOpen, setIsRoiOpen] = useState(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
+  const [isAskAutoPMOpen, setIsAskAutoPMOpen] = useState(false);
 
   const [toastMessage, setToastMessage] =
     useState<string | null>(null);
@@ -563,6 +565,26 @@ export default function DashboardPage() {
         />
 
         {/* -------------------------------------------- */}
+        {/* ASK AUTOPM                                  */}
+        {/* -------------------------------------------- */}
+
+        <div className="flex justify-end -mb-3">
+          <button
+            onClick={() => setIsAskAutoPMOpen(true)}
+            disabled={!report}
+            className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border border-indigo-400/25 bg-indigo-500/10 hover:bg-indigo-500/20 hover:border-indigo-400/40 text-indigo-200 text-xs font-bold transition disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <div className="w-6 h-6 rounded-lg bg-indigo-500/15 flex items-center justify-center">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-300 group-hover:scale-110 transition" />
+            </div>
+
+            Ask AutoPM
+
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition" />
+          </button>
+        </div>
+
+        {/* -------------------------------------------- */}
         {/* GENERATION PROGRESS                         */}
         {/* -------------------------------------------- */}
 
@@ -656,6 +678,13 @@ export default function DashboardPage() {
         onSendEmail={
           handleSendEmailDemo
         }
+      />
+
+      <AskAutoPM
+        report={report}
+        analysisMode={analysisMode}
+        isOpen={isAskAutoPMOpen}
+        onClose={() => setIsAskAutoPMOpen(false)}
       />
 
       {/* -------------------------------------------- */}
